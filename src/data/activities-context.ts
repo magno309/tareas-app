@@ -14,7 +14,7 @@ export interface Activity {
 
 export interface ActivitiesContextModel {
     activities: Activity[];
-    addActivity: (title: string, description: string, activityType: ActivityType) => void;
+    addActivity: (title: string, description: string, hour: string, activityType: ActivityType) => void;
     completeActivity: (activityId: string) => void;
 }
 
