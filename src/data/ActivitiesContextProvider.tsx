@@ -12,6 +12,15 @@ const ActivitiesContextProvider: React.FC = (props) => {
                 hour: '23:00',
                 activityType: 'Trabajo',
                 imageUrl: '/assets/imagenes/trabajar.jpg',
+                isCompleted: true
+            },
+            {
+                id: Math.random().toString(),
+                title: 'Descansar en vacaciones',
+                description: 'Proyecto de Ionic + React para móviles 2',
+                hour: '23:00',
+                activityType: 'Descanso',
+                imageUrl: '/assets/imagenes/mimir.jpg',
                 isCompleted: false
             }
         ]
