@@ -3,6 +3,8 @@ import React, { useContext, useRef, useState } from 'react';
 import { IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonGrid, IonHeader, IonInput, IonItem, IonLabel, IonMenuButton, IonPage, IonRow, IonSegment, IonSegmentButton, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import ActivitiesContext, { ActivityType } from '../../data/activities-context';
+import { Toast } from '@capacitor/toast';
+import { LocalNotificationSchema, LocalNotifications } from '@capacitor/local-notifications';
 
 
 const AddActivities: React.FC = () => {
@@ -16,7 +18,25 @@ const AddActivities: React.FC = () => {
 
     const activitiesCtxt = useContext(ActivitiesContext);
 
-    const [toastMsg, setToastMsg] = useState<string>('');
+    const createNotification =  async (title: string, body: string, date: Date) => {
+        let notiOptions:LocalNotificationSchema={
+            id: 1,
+            title: title,
+            body: body,
+            schedule: {at: date} //new Date(new Date().getTime()+3000)
+        }
+        await LocalNotifications.schedule({
+            notifications:[notiOptions]
+        });
+    };
+
+    //const [toastMsg, setToastMsg] = useState<string>('');
+    const showToast = async () => {
+        await Toast.show({
+          text: '¡La actividad se ha registrado!',
+          duration: 'long'
+        });
+    };
 
     const addActivity = () => {
         const title = titleInput.current?.value as string;
@@ -27,14 +47,16 @@ const AddActivities: React.FC = () => {
 
         if( title && description && type && hour){
             activitiesCtxt.addActivity(title, description, hour, type);
-            setToastMsg("La actividad se ha guardado!");
+            createNotification(title, description, date);
+            //setToastMsg("La actividad se ha guardado!");
+            showToast();
             history.replace('/all-activities');
         }
     };
 
     return (
         <React.Fragment>
-            <IonToast isOpen={!!toastMsg} message={toastMsg} duration={4000} color="medium" onDidDismiss={ () => setToastMsg('') }/>
+            
 
             <IonPage>
             <IonHeader>

@@ -2,6 +2,10 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonRouterOutlet, IonTitle, IonToolbar } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
+import { Device } from '@capacitor/device';
+import { Dialog } from '@capacitor/dialog';
+import { Clipboard } from '@capacitor/clipboard';
+import { Toast } from '@capacitor/toast';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -23,9 +27,44 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import AllActivities from './pages/AllActivities/AllActivities';
 import AddActivities from './pages/AddActivities/AddActivity';
-import { addOutline, homeOutline } from 'ionicons/icons';
+import { addOutline, homeOutline, informationCircleOutline} from 'ionicons/icons';
 import ActivitiesContextProvider from './data/ActivitiesContextProvider';
 
+const toastClipboard = async () => {
+  await Toast.show({
+    text: 'Información copiada en portapapeles',
+    duration: 'short'
+  });
+};
+
+const writeToClipboard = async (str: string) => {
+  await Clipboard.write({
+    string: str
+  });
+  toastClipboard();
+};
+
+const showConfirm = async (info: string) => {
+  const { value } = await Dialog.confirm({
+    title: 'Información del dispositivo',
+    message: info,
+    cancelButtonTitle: 'COPIAR'
+  });
+  console.log('Dialog:', value);
+  if(!value){
+    writeToClipboard(info)
+  }
+};
+
+const deviceInfo = async () => {
+  const info = await Device.getInfo();  
+  console.log('Device info:', info);
+  var strInfo: string = "Nombre: "+info.name+
+    "\nModelo: "+info.model+
+    "\nSistema Operativo: "+info.operatingSystem+
+    "\nVersión: "+info.osVersion;
+  showConfirm(strInfo);
+};
 
 const App: React.FC = () => (
   <IonApp>
@@ -48,6 +87,12 @@ const App: React.FC = () => (
               <IonItem routerLink="/add-activities" routerDirection="none" lines="none">
                 <IonIcon color="medium" slot="start" icon={addOutline} />
                 <IonLabel>Agregar actividad</IonLabel>
+              </IonItem>
+            </IonMenuToggle>
+            <IonMenuToggle>
+              <IonItem routerDirection="none" lines="none" onClick={deviceInfo}>
+                <IonIcon color="medium" slot="start" icon={informationCircleOutline} />
+                <IonLabel>Información del dispositivo</IonLabel>
               </IonItem>
             </IonMenuToggle>
           </IonList>
