@@ -5,7 +5,7 @@ import { IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardS
 import ActivitiesContext, { Activity } from '../../data/activities-context';
 import CompleteModal from '../../components/CompleteModal';
 import {checkmarkCircleOutline} from 'ionicons/icons';
-
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 const AllActivities: React.FC = () => {
 
@@ -13,8 +13,13 @@ const AllActivities: React.FC = () => {
 
     const activitiesCtxt = useContext(ActivitiesContext);
 
+    const hapticsVibrate = async () => {
+        await Haptics.vibrate();
+    };
+      
     const openCompleteModal = (activity: Activity) => {
         setActivityToComplete(activity);
+        hapticsVibrate();
     };
 
     const closeModal = () => {
